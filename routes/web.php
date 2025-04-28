@@ -16,4 +16,7 @@ Route::resource('enderecos', EnderecoController::class);
 Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
-     Route::resource('vendas', VendaController::class);
+Route::resource('vendas', VendaController::class);
+Route::resource('categorias', CategoriaController::class)->middleware(['auth','admin']);
+Route::resource('produtos',   ProdutoController::class)->middleware(['auth','admin']);
+Route::resource('fotos',      FotoController::class)->middleware(['auth','admin']);

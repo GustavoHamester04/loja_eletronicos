@@ -12,4 +12,18 @@ class Produto extends Model
                 ->withPivot(['quantidade','subtotal'])
                 ->withTimestamps();
 }
+protected $fillable = [
+    'nome','descricao','estoque','slug','valor','categoria_id'
+  ];
+
+  public function categoria()
+  {
+      return $this->belongsTo(Categoria::class);
+  }
+
+  public function fotos()
+  {
+      return $this->hasMany(Foto::class);
+  }
 }
+
