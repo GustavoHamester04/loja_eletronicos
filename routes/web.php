@@ -36,4 +36,5 @@ Route::middleware('auth')->group(function () {
     Route::post('carrinho/remover/{id}', [CarrinhoController::class, 'remover'])->name('carrinho.remover');
     Route::post('carrinho/limpar', [CarrinhoController::class, 'limpar'])->name('carrinho.limpar');
     Route::post('carrinho/finalizar', [CarrinhoController::class, 'finalizar'])->name('carrinho.finalizar');
+    Route::post('/carrinho/finalizar', [CarrinhoController::class, 'finalizar'])->name('carrinho.finalizar');
 });

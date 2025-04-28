@@ -25,7 +25,11 @@
                     <td>{{ $foto->id }}</td>
                     <td>{{ $foto->produto->nome }}</td>
                     <td>
-                        <img src="{{ asset('storage/' . $foto->arquivo) }}" alt="Foto" width="100">
+                        @if($foto->arquivo)
+                        <img src="{{ asset('storage/'.$foto->arquivo) }}" alt="Foto do Produto" width="150">
+                        @else
+                            Sem imagem
+                        @endif
                     </td>
                     <td class="d-flex gap-1">
                         <a href="{{ route('fotos.show', $foto) }}" class="btn btn-sm btn-primary">Ver</a>

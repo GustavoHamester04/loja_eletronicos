@@ -72,10 +72,12 @@ class CategoriaController extends Controller
     }
 
     public function destroy(Categoria $categoria)
-    {
-        $categoria->delete();
-        return redirect()
-            ->route('categorias.index')
-            ->with('success','Categoria excluída.');
+{
+    if ($categoria->produtos()->exists()) {
+        return redirect()->route('categorias.index')->with('error', 'Não é possível excluir uma categoria que possui produtos.');
     }
+
+    $categoria->delete();
+    return redirect()->route('categorias.index')->with('success', 'Categoria excluída.');
+}
 }

@@ -6,15 +6,10 @@ use App\Models\Foto;
 use App\Models\Produto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class FotoController extends Controller
 {
-    public function index()
-    {
-        $fotos = Foto::with('produto')->paginate(10);
-        return view('fotos.index', compact('fotos'));
-    }
-
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
@@ -23,6 +18,12 @@ class FotoController extends Controller
             }
             return $next($request);
         });
+    }
+
+    public function index()
+    {
+        $fotos = Foto::with('produto')->paginate(10);
+        return view('fotos.index', compact('fotos'));
     }
 
     public function create()
@@ -34,26 +35,30 @@ class FotoController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'arquivo' => 'required|image|max:2048',
             'produto_id' => 'required|exists:produtos,id',
+            'fotos' => 'required|array|min:1|max:5',
+            'fotos.*' => 'image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        // verifica limite de 5 fotos
-        if (Foto::where('produto_id', $request->produto_id)->count() >= 5) {
+        $qtdExistente = Foto::where('produto_id', $request->produto_id)->count();
+        $qtdNova = count($request->file('fotos'));
+
+        if (($qtdExistente + $qtdNova) > 5) {
             return back()->withErrors('Máximo de 5 fotos por produto.');
         }
 
-        // faz upload
-        $path = $request->file('arquivo')->store('produtos', 'public');
+        foreach ($request->file('fotos') as $arquivo) {
+            $path = $arquivo->store('produtos', 'public');
 
-        Foto::create([
-            'arquivo' => $path,
-            'produto_id' => $request->produto_id,
-        ]);
+            Foto::create([
+                'produto_id' => $request->produto_id,
+                'arquivo' => $path,
+            ]);
+        }
 
         return redirect()
             ->route('fotos.index')
-            ->with('success', 'Foto enviada com sucesso!');
+            ->with('success', 'Fotos enviadas com sucesso!');
     }
 
     public function show(Foto $foto)
@@ -70,13 +75,14 @@ class FotoController extends Controller
     public function update(Request $request, Foto $foto)
     {
         $request->validate([
-            'arquivo' => 'nullable|image|max:2048',
             'produto_id' => 'required|exists:produtos,id',
+            'arquivo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         if ($request->hasFile('arquivo')) {
-            // opcional: apagar arquivo antigo
-            \Storage::disk('public')->delete($foto->arquivo);
+            if ($foto->arquivo) {
+                Storage::disk('public')->delete($foto->arquivo);
+            }
             $foto->arquivo = $request->file('arquivo')->store('produtos', 'public');
         }
 
@@ -85,13 +91,12 @@ class FotoController extends Controller
 
         return redirect()
             ->route('fotos.index')
-            ->with('success', 'Foto atualizada!');
+            ->with('success', 'Foto atualizada com sucesso!');
     }
 
     public function destroy(Foto $foto)
     {
-        // apaga do storage
-        \Storage::disk('public')->delete($foto->arquivo);
+        Storage::disk('public')->delete($foto->arquivo);
         $foto->delete();
 
         return redirect()
