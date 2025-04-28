@@ -2,18 +2,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Cliente;
 
 class Venda extends Model
 {
     protected $fillable = [
-      'cliente_id',
-      'endereco_id',
-      'valor_total',
+        'cliente_id',
+        'endereco_id',
+        'valor_total',
     ];
 
     public function cliente()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Cliente::class);
     }
 
     public function endereco()
@@ -24,7 +25,7 @@ class Venda extends Model
     public function produtos()
     {
         return $this->belongsToMany(Produto::class, 'produto_venda')
-                    ->withPivot(['quantidade','subtotal'])
-                    ->withTimestamps();
+            ->withPivot(['quantidade', 'subtotal'])
+            ->withTimestamps();
     }
 }
