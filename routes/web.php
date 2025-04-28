@@ -9,6 +9,7 @@ use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\FotoController;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\CarrinhoController;
 
 Route::get('/', function () {
     return view('home');
@@ -25,3 +26,10 @@ Route::resource('categorias', CategoriaController::class)->middleware(['auth','a
 Route::resource('produtos',   ProdutoController::class)->middleware(['auth','admin']);
 Route::resource('fotos',      FotoController::class)->middleware(['auth','admin']);
 Route::resource('clientes', ClienteController::class)->middleware(['auth','clientes']);
+
+Route::middleware('auth')->group(function(){
+    Route::get('carrinho', [CarrinhoController::class, 'index'])->name('carrinho.index');
+    Route::post('carrinho/adicionar/{id}', [CarrinhoController::class, 'adicionar'])->name('carrinho.adicionar');
+    Route::post('carrinho/remover/{id}', [CarrinhoController::class, 'remover'])->name('carrinho.remover');
+    Route::post('carrinho/limpar', [CarrinhoController::class, 'limpar'])->name('carrinho.limpar');
+});
