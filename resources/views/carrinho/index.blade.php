@@ -46,5 +46,22 @@
             @csrf
             <button class="btn btn-warning">Limpar Carrinho</button>
         </form>
+        <form action="{{ route('carrinho.finalizar') }}" method="POST" class="mt-3">
+    @csrf
+    <div class="mb-3">
+        <label for="endereco_id" class="form-label">Escolha o Endereço de Entrega</label>
+        <select name="endereco_id" id="endereco_id" class="form-select" required>
+            @foreach(Auth::user()->enderecos as $endereco)
+                <option value="{{ $endereco->id }}">{{ $endereco->descricao }}</option>
+            @endforeach
+        </select>
+    </div>
+    <button type="submit" class="btn btn-success">Finalizar Compra</button>
+</form>
+
+<form action="{{ route('carrinho.limpar') }}" method="POST" class="mt-2">
+    @csrf
+    <button class="btn btn-warning">Limpar Carrinho</button>
+</form>
     @endif
 @endsection

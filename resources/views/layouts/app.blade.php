@@ -42,9 +42,9 @@
       Administração
       </a>
       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminMenu">
-      {{-- <li><a class="dropdown-item" href="{{ route('categorias.index') }}">Categorias</a></li>
+      <li><a class="dropdown-item" href="{{ route('categorias.index') }}">Categorias</a></li>
       <li><a class="dropdown-item" href="{{ route('produtos.index') }}">Produtos</a></li>
-      <li><a class="dropdown-item" href="{{ route('fotos.index') }}">Fotos de Produtos</a></li> --}}
+      <li><a class="dropdown-item" href="{{ route('fotos.index') }}">Fotos de Produtos</a></li>
       <li><a class="dropdown-item" href="{{ route('cidades.index') }}">Cidades</a></li>
       </ul>
       </li>

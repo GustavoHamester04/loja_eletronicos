@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Foto;
 use App\Models\Produto;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class FotoController extends Controller
 {
@@ -12,6 +13,16 @@ class FotoController extends Controller
     {
         $fotos = Foto::with('produto')->paginate(10);
         return view('fotos.index', compact('fotos'));
+    }
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (!Auth::check() || !Auth::user()->is_admin) {
+                abort(403, 'Acesso negado.');
+            }
+            return $next($request);
+        });
     }
 
     public function create()
