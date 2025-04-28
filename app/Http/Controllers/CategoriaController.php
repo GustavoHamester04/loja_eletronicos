@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Categoria;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CategoriaController extends Controller
 {
@@ -12,6 +13,16 @@ class CategoriaController extends Controller
         $categorias = Categoria::with('filhas')->get();
         return view('categorias.index', compact('categorias'));
     }
+
+    public function __construct()
+{
+    $this->middleware(function ($request, $next) {
+        if (!Auth::check() || !Auth::user()->is_admin) {
+            abort(403, 'Acesso negado.');
+        }
+        return $next($request);
+    });
+}
 
     public function create()
     {
