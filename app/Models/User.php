@@ -51,4 +51,10 @@ class User extends Authenticatable
     {
         return (bool) $this->is_admin;
     }
+
+    // ✅ Aqui adicionamos o relacionamento corretamente
+    public function enderecos()
+    {
+        return $this->hasMany(Endereco::class, 'cliente_id');
+    }
 }

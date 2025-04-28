@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Produto;
+use App\Models\Venda;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CarrinhoController extends Controller
 {
@@ -20,7 +22,6 @@ class CarrinhoController extends Controller
     public function adicionar($id)
     {
         $produto = Produto::findOrFail($id);
-
         $carrinho = session()->get('carrinho', []);
 
         if (isset($carrinho[$id])) {
@@ -55,45 +56,49 @@ class CarrinhoController extends Controller
     public function limpar()
     {
         session()->forget('carrinho');
-
         return redirect()->route('carrinho.index')->with('success', 'Carrinho limpo!');
     }
+
     public function finalizar(Request $request)
     {
-        $request->validate([
-            'endereco_id' => 'required|exists:enderecos,id',
-        ]);
-
         $carrinho = session()->get('carrinho', []);
 
         if (empty($carrinho)) {
-            return redirect()->route('carrinho.index')->with('error', 'Seu carrinho está vazio.');
+            return redirect()->back()->with('error', 'O carrinho está vazio.');
         }
 
-        $venda = \App\Models\Venda::create([
-            'cliente_id' => Auth::id(),
-            'endereco_id' => $request->endereco_id,
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Faça login para finalizar a compra.');
+        }
+
+        $endereco = Auth::user()->enderecos()->first();
+        if (!$endereco) {
+            return redirect()->back()->with('error', 'Nenhum endereço encontrado. Cadastre um endereço primeiro.');
+        }
+
+        $venda = Venda::create([
+            'cliente_id'  => Auth::id(),
+            'endereco_id' => $endereco->id,
             'valor_total' => 0,
         ]);
 
-        $total = 0;
+        $valorTotal = 0;
+
         foreach ($carrinho as $id => $item) {
-            $produto = \App\Models\Produto::findOrFail($id);
-            $subtotal = $item['subtotal'];
+            $produto = Produto::findOrFail($id);
+            $subtotal = $produto->valor * $item['quantidade'];
 
             $venda->produtos()->attach($produto->id, [
                 'quantidade' => $item['quantidade'],
-                'subtotal' => $subtotal,
+                'subtotal'   => $subtotal,
             ]);
 
-            $total += $subtotal;
+            $valorTotal += $subtotal;
         }
 
-        $venda->update(['valor_total' => $total]);
-
-        session()->forget('carrinho'); // Limpa carrinho
+        $venda->update(['valor_total' => $valorTotal]);
+        session()->forget('carrinho');
 
         return redirect()->route('vendas.index')->with('success', 'Compra finalizada com sucesso!');
     }
-
 }
