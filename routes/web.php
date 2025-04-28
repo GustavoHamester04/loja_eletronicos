@@ -8,6 +8,7 @@ use App\Http\Controllers\VendaController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\FotoController;
+use App\Http\Controllers\ClienteController;
 
 Route::get('/', function () {
     return view('home');
@@ -23,3 +24,4 @@ Route::resource('vendas', VendaController::class);
 Route::resource('categorias', CategoriaController::class)->middleware(['auth','admin']);
 Route::resource('produtos',   ProdutoController::class)->middleware(['auth','admin']);
 Route::resource('fotos',      FotoController::class)->middleware(['auth','admin']);
+Route::resource('clientes', ClienteController::class)->middleware(['auth','clientes']);
