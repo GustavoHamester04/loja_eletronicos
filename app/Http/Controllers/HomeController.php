@@ -25,7 +25,7 @@ class HomeController extends Controller
      */
     public function index()
 {
-    $produtos = Produto::with('fotos')->paginate(9); // carrega produtos E fotos
+    $produtos = Produto::paginate(10); // Retorna um paginador com 10 itens por página
     return view('home', compact('produtos'));
 }
 }

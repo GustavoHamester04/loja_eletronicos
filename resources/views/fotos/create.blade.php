@@ -28,7 +28,7 @@
         
         <div class="mb-3">
             <label for="fotos" class="form-label">Fotos (máximo 5)</label>
-            <input type="file" name="fotos[]" id="fotos" class="form-control" multiple>
+            <input type="file" name="fotos[]" id="arquivo" class="form-control" multiple>
             @error('fotos')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror

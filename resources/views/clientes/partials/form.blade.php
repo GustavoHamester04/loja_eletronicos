@@ -33,3 +33,9 @@
     <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email', $cliente->email ?? '') }}">
     @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
 </div>
+
+<div class="mb-3">
+    <label for="senha" class="form-label">Senha</label>
+    <input type="password" name="senha" class="form-control @error('senha') is-invalid @enderror">
+    @error('senha') <div class="invalid-feedback">{{ $message }}</div> @enderror
+</div>
