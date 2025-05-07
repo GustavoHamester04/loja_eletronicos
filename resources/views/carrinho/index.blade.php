@@ -12,15 +12,15 @@
     <div class="alert alert-danger">{{ session('error') }}</div>
 @endif
 
-<h1>Meu Carrinho</h1>
+<h1 class="mb-4">Meu Carrinho</h1>
 
 @if(empty($carrinho))
     <div class="alert alert-info">
         Seu carrinho está vazio.
     </div>
 @else
-    <table class="table table-bordered">
-        <thead>
+    <table class="table table-striped table-hover table-bordered">
+        <thead class="table-primary">
             <tr>
                 <th>Produto</th>
                 <th>Preço Unitário</th>
@@ -62,7 +62,11 @@
         </form>
 
         @auth
-            @if(Auth::user()->enderecos()->exists())
+            @php
+                $cliente = Auth::user()->load('enderecos');
+            @endphp
+
+            @if($cliente->enderecos->isNotEmpty())
                 <form action="{{ route('carrinho.finalizar') }}" method="POST">
                     @csrf
                     <button type="submit" class="btn btn-success">

@@ -60,45 +60,48 @@ class CarrinhoController extends Controller
     }
 
     public function finalizar(Request $request)
-    {
-        $carrinho = session()->get('carrinho', []);
+{
+    $carrinho = session()->get('carrinho', []);
 
-        if (empty($carrinho)) {
-            return redirect()->back()->with('error', 'O carrinho está vazio.');
-        }
+    if (empty($carrinho)) {
+        return redirect()->back()->with('error', 'O carrinho está vazio.');
+    }
 
-        if (!Auth::check()) {
-            return redirect()->route('login')->with('error', 'Faça login para finalizar a compra.');
-        }
+    if (!Auth::check()) {
+        return redirect()->route('login')->with('error', 'Faça login para finalizar a compra.');
+    }
 
-        $endereco = Auth::user()->enderecos()->first();
-        if (!$endereco) {
-            return redirect()->back()->with('error', 'Nenhum endereço encontrado. Cadastre um endereço primeiro.');
-        }
+    $cliente = Auth::user()->load('enderecos');
 
-        $venda = Venda::create([
-            'cliente_id'  => Auth::id(),
-            'endereco_id' => $endereco->id,
-            'valor_total' => 0,
+    if ($cliente->enderecos->isEmpty()) {
+        return redirect()->route('enderecos.create')->with('error', 'Nenhum endereço encontrado. Cadastre um endereço primeiro.');
+    }
+
+    $endereco = $cliente->enderecos->first();
+
+    $venda = Venda::create([
+        'cliente_id'  => $cliente->id,
+        'endereco_id' => $endereco->id,
+        'valor_total' => 0,
+    ]);
+
+    $valorTotal = 0;
+
+    foreach ($carrinho as $id => $item) {
+        $produto = Produto::findOrFail($id);
+        $subtotal = $produto->valor * $item['quantidade'];
+
+        $venda->produtos()->attach($produto->id, [
+            'quantidade' => $item['quantidade'],
+            'subtotal'   => $subtotal,
         ]);
 
-        $valorTotal = 0;
-
-        foreach ($carrinho as $id => $item) {
-            $produto = Produto::findOrFail($id);
-            $subtotal = $produto->valor * $item['quantidade'];
-
-            $venda->produtos()->attach($produto->id, [
-                'quantidade' => $item['quantidade'],
-                'subtotal'   => $subtotal,
-            ]);
-
-            $valorTotal += $subtotal;
-        }
-
-        $venda->update(['valor_total' => $valorTotal]);
-        session()->forget('carrinho');
-
-        return redirect()->route('vendas.index')->with('success', 'Compra finalizada com sucesso!');
+        $valorTotal += $subtotal;
     }
+
+    $venda->update(['valor_total' => $valorTotal]);
+    session()->forget('carrinho');
+
+    return redirect()->route('vendas.index')->with('success', 'Compra finalizada com sucesso!');
+}
 }

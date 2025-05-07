@@ -19,20 +19,21 @@ class ClienteController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'nome' => 'required|string|max:255',
-            'cpf' => 'required|string|max:14|unique:clientes',
-            'rg' => 'nullable|string|max:20',
-            'data_nascimento' => 'required|date',
-            'telefone' => 'nullable|string|max:20',
-            'email' => 'nullable|string|email|max:255',
-        ]);
+{
+    $data = $request->validate([
+        'nome' => 'required|string|max:255',
+        'cpf' => 'required|string|max:14|unique:clientes,cpf',
+        'rg' => 'nullable|string|max:20',
+        'data_nascimento' => 'required|date',
+        'telefone' => 'nullable|string|max:20',
+        'email' => 'required|email|unique:clientes,email',
+        'senha' => 'required|string|min:6',
+    ]);
 
-        Cliente::create($request->all());
+    Cliente::create($data);
 
-        return redirect()->route('clientes.index')->with('success', 'Cliente cadastrado com sucesso!');
-    }
+    return redirect()->route('clientes.index')->with('success', 'Cliente cadastrado com sucesso!');
+}
 
     public function show(Cliente $cliente)
     {
