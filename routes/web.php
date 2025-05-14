@@ -11,9 +11,7 @@ use App\Http\Controllers\FotoController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\CarrinhoController;
 
-Route::get('/', function () {
-    return view('home');
-})->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::resource('cidades', CidadeController::class);
 Route::resource('enderecos', EnderecoController::class);
