@@ -43,11 +43,11 @@
           <td class="d-flex gap-1">
             <a href="{{ route('enderecos.show', $e) }}"
                class="btn btn-sm btn-primary" title="Ver">
-              <i class="bi bi-eye"></i>
+              <i class="bi bi-eye">Ver</i>
             </a>
             <a href="{{ route('enderecos.edit', $e) }}"
                class="btn btn-sm btn-warning" title="Editar">
-              <i class="bi bi-pencil"></i>
+              <i class="bi bi-pencil">Editar</i>
             </a>
             <form action="{{ route('enderecos.destroy', $e) }}"
                   method="POST" class="d-inline">
@@ -57,7 +57,7 @@
                       class="btn btn-sm btn-danger"
                       onclick="return confirm('Excluir este endereço?')"
                       title="Excluir">
-                <i class="bi bi-trash"></i>
+                <i class="bi bi-trash">Excluir</i>
               </button>
             </form>
           </td>
